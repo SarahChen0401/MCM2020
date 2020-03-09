@@ -1,0 +1,2 @@
+将figure1-6系列的图放在一起，取一个大的名字： the importance of different product review's word features
+将figure*.2系列的图放在一起，取一个大的名字： randomForest error rate in different number of trees in product rerview
