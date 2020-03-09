@@ -25,14 +25,23 @@ for (i in 1:length(filelist)) {
 }
 
 IDF <- log10(length(filelist)/microwave.count.row[,1])##IDF matrix (number of reviews/number of unique words' occourance in all reviews)
-TF_IDF_microwave_head <- t(apply(as.matrix(TF), 1, function(x) as.matrix(x*IDF)))##TF-IDF matrix
-colnames(TF_IDF_microwave_head) <- colnames(TF)
+#TF_IDF_microwave_head <- t(apply(as.matrix(TF), 1, function(x) as.matrix(x*IDF)))##TF-IDF matrix
+#colnames(TF_IDF_microwave_head) <- colnames(TF)
+TF1 <- TF[1:round(dim(TF)[1]/2),]
+TF2 <- TF[round(dim(TF)[1]/2)+1:dim(TF)[1],]
+#rm(TF)
+TF_IDF_microwave_head1 <- t(apply(as.matrix(TF1), 1, function(x) as.matrix(x*IDF)))
+TF_IDF_microwave_head2 <- t(apply(as.matrix(TF2), 1, function(x) as.matrix(x*IDF)))
+TF_IDF_microwave_head <- rbind(TF_IDF_microwave_head1,TF_IDF_microwave_head2)
+colnames(TF_IDF_microwave_head) <- microwave.head_unique_words
+rm(TF1,TF2,TF_IDF_microwave_head1,TF_IDF_microwave_head2)
 
+setwd("E:\\MCM\\processed_data")
 review_mat <- function(product,reviewPart){
   microwave.head.length <- read.table(paste0(product,"\\",product,".",reviewPart,".length.txt"),header = F,as.is=T)
   microwave.head.length <- as.matrix(unlist(microwave.head.length))
-  microwave.head_unique_words <- read.table(paste0(product,"\\",product,".",reviewPart,"_unique_words.txt"),as.is = T)
-  microwave.head_unique_words <- as.character(unlist(microwave.head_unique_words))
+  microwave.head_unique_words <- read.table(paste0(product,"\\",product,".",reviewPart,"_unique_words.txt"),as.is = T,blank.lines.skip=F,header=F)
+  microwave.head_unique_words <- as.character(unlist(microwave.head_unique_words[,1]))
   microwave.count.row <- read.table(paste0(product,"\\",product,".",reviewPart,".count_row.txt"),header = F,as.is = T)
   microwave.count.row <- as.data.frame(microwave.count.row +1) ##the number of occourance of unique words
   microwave.count.row$word <-  microwave.head_unique_words
@@ -54,8 +63,15 @@ review_mat <- function(product,reviewPart){
   }
   
   IDF <- log10(length(filelist)/microwave.count.row[,1])##IDF matrix (number of reviews/number of unique words' occourance in all reviews)
-  TF_IDF_microwave_head <- t(apply(as.matrix(TF), 1, function(x) as.matrix(x*IDF)))##TF-IDF matrix
-  colnames(TF_IDF_microwave_head) <- colnames(TF)
+  #TF_IDF_microwave_head <- t(apply(as.matrix(TF), 1, function(x) as.matrix(x*IDF)))##TF-IDF matrix
+  TF1 <- TF[1:round(dim(TF)[1]/2),]
+  TF2 <- TF[(round(dim(TF)[1]/2)+1):dim(TF)[1],]
+  rm(TF)
+  TF_IDF_microwave_head1 <- t(apply(as.matrix(TF1), 1, function(x) as.matrix(x*IDF)))
+  TF_IDF_microwave_head2 <- t(apply(as.matrix(TF2), 1, function(x) as.matrix(x*IDF)))
+  TF_IDF_microwave_head <- rbind(TF_IDF_microwave_head1,TF_IDF_microwave_head2)
+  colnames(TF_IDF_microwave_head) <- microwave.head_unique_words
+  rm(TF1,TF2,TF_IDF_microwave_head1,TF_IDF_microwave_head2)
   return(TF_IDF_microwave_head)
 }
 
